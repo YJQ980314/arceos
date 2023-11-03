@@ -27,6 +27,8 @@ const CMD_TABLE: &[(&str, CmdHandler)] = &[
     ("pwd", do_pwd),
     ("rm", do_rm),
     ("uname", do_uname),
+    ("rename", do_rename),
+    ("mv", do_move)
 ];
 
 fn file_type_to_char(ty: FileType) -> char {
@@ -50,7 +52,9 @@ fn file_type_to_char(ty: FileType) -> char {
 }
 
 #[rustfmt::skip]
+// 跳过对标记的代码段的自动格式化处理
 const fn file_perm_to_rwx(mode: u32) -> [u8; 9] {
+    // 常量函数是在编译时计算结果并被嵌入到生成的代码中的函数。
     let mut perm = [b'-'; 9];
     macro_rules! set {
         ($bit:literal, $rwx:literal) => {
@@ -272,6 +276,98 @@ fn do_exit(_args: &str) {
     std::process::exit(0);
 }
 
+// 测试样例
+// make A=apps/fs/shell ARCH=x86_64 LOG=info SMP=4 run BLK=y DISK_IMG=./disk/disk.img
+// rename /Program/arceos.txt arce.txt
+// rename short.txt test.txt
+// rename test.txt short.txt
+// rename java.txt short.txt
+// rename tests /Program/tests 
+// rename -d /Program/tests /Program/test
+fn do_rename(args: &str) {
+    let mut _rn_dir = false;
+    let mut file_names: Vec<&str> = Vec::new();
+    for arg in args.split_whitespace() {
+        if arg == "-d" {
+            _rn_dir = true;
+        } else {
+            file_names.push(arg);
+        }
+    }
+
+    if let Err(_) = fs::metadata(file_names[0]) {
+        print_err!("move", "value NotFound");
+        return ;
+    }
+
+    if file_names.len() == 2 {
+        fs::rename(file_names[0], file_names[1]).unwrap();
+    } else if file_names.len() > 2 {
+        print_err!("rename", "Too many arguments");
+    } else {
+        print_err!("rename", "Too few arguments");
+    }
+}
+
+// 重命名文件：
+// 如果newname指定的文件存在，则会被删除。
+// 如果newname与oldname不在一个目录下，则相当于移动文件。
+// 重命名目录：
+// 如果newname和oldname都为目录，则重命名目录。
+// 如果newname指定的目录存在且为空目录，则先将newname删除。
+// 对于newname和oldname两个目录，调用进程必须有写权限。
+// 重命名目录时，newname不能包含oldname作为其路径前缀。例如，不能将/usr更名为/usr/foo/testdir，因为老名字（ /usr/foo）是新名字的路径前缀，因而不能将其删除。
+
+// 测试样例
+// cd Program
+// mv /Program/Rust/test.txt /Program
+// mv /Program/test.txt /Program/Rust
+// mv /Program/java.txt /Program/Rust
+
+// mv -d /Program/Rust/JavaScript /Program
+// mv -d /Program/JavaScript /Program/Rust
+// mv -d /Program/Java /Program/Rust
+fn do_move(args: &str) {
+    let mut _mv_dir = false;
+    let mut file_names: Vec<&str> = Vec::new();
+    for arg in args.split_whitespace() {
+        if arg == "-d" {
+            _mv_dir = true;
+        } else {
+            file_names.push(arg);
+        }
+    }
+    for file_meta in file_names.iter() {
+        if let Err(_) = fs::metadata(file_meta) {
+            print_err!("move", "value NotFound");
+            return ;
+        }
+    }
+    // println!("{}", mv_dir);
+    fn move_one(file_names: Vec<&str>) {
+        if fs::metadata(file_names[1]).unwrap().is_dir() {
+            println!("{:?}", file_names);
+            let file_name = &file_names[0][file_names[0].rfind('/').unwrap()+1..];
+            let mut new_file = String::from(file_names[1]);
+            new_file.push_str("/");
+            new_file.push_str(file_name);
+            // println!("{}", file_names[0]);
+            // println!("{}", new_file);
+            fs::rename(file_names[0], &new_file).unwrap();
+        } else {
+            print_err!("move", "The output must be a folder");
+        }
+    }
+
+    if file_names.len() == 2 {
+        move_one(file_names)
+    } else if file_names.len() > 2 {
+        print_err!("move", "Too many arguments");
+    } else {
+        print_err!("move", "Too few arguments");
+    }
+}
+    
 pub fn run_cmd(line: &[u8]) {
     let line_str = unsafe { core::str::from_utf8_unchecked(line) };
     let (cmd, args) = split_whitespace(line_str);

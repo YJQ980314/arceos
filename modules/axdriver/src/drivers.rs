@@ -14,6 +14,7 @@ use driver_pci::{DeviceFunction, DeviceFunctionInfo, PciRoot};
 pub use super::dummy::*;
 
 pub trait DriverProbe {
+    // 用于全局设备探测，如果没有明确的特定设备探测方法，可以使用这个默认方法
     fn probe_global() -> Option<AxDeviceEnum> {
         None
     }
@@ -51,6 +52,8 @@ register_display_driver!(
     <virtio::VirtIoGpu as VirtIoDevMeta>::Device
 );
 
+// 根据条件 cfg(block_dev = "ramdisk") 的值，定义了一个名为 RamDiskDriver 的结构体，然后使用 register_block_driver! 宏注册了一个块设备驱动。
+// 接着，实现了 DriverProbe trait 的 probe_global 方法，根据设备的全局情况来尝试探测并返回 AxDeviceEnum 枚举类型的值。
 cfg_if::cfg_if! {
     if #[cfg(block_dev = "ramdisk")] {
         pub struct RamDiskDriver;

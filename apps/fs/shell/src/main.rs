@@ -1,9 +1,14 @@
 #![cfg_attr(feature = "axstd", no_std)]
+// 如果名为 "axstd" 的特性（feature）被启用（通常在Cargo.toml 中配置），则在编译时将禁用标准库（no_std）
 #![cfg_attr(feature = "axstd", no_main)]
+// 如果名为 "axstd" 的特性被启用，将禁用 main 函数（no_main）
 
 #[macro_use]
+// `#[macro_use]`的主要作用是使宏在当前 crate 的作用域中可见，从而允许你在代码中使用这些宏，而无需显式导入它们。
 #[cfg(feature = "axstd")]
 extern crate axstd as std;
+// 编译器要根据是否启用 "axstd" 特性来配置代码
+// 在启用 "axstd" 特性的情况下，你的代码将使用 "axstd" crate 作为标准库，而不是 Rust 标准库。
 
 macro_rules! path_to_str {
     ($path:expr) => {{

@@ -2,7 +2,7 @@ use axfs_vfs::{VfsNodeAttr, VfsNodeOps, VfsNodePerm, VfsNodeType, VfsResult};
 
 /// A null device behaves like `/dev/null`.
 ///
-/// Nothing can be read and all writes are discarded.
+/// Nothing can be read and all writes are discarded. 无法读取任何内容，所有写入都将被丢弃。
 pub struct NullDev;
 
 impl VfsNodeOps for NullDev {

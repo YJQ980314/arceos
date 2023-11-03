@@ -2,6 +2,7 @@
 ///
 /// Currently not used.
 #[non_exhaustive]
+// #[non_exhaustive] 属性用于指示类型的非尽匮尽性，以便在未来版本中添加新特性时，不会破坏已有的代码。这有助于库的维护者更好地管理向后兼容性
 pub struct FileSystemInfo;
 
 /// Node (file/directory) attributes.
@@ -18,6 +19,7 @@ pub struct VfsNodeAttr {
     blocks: u64,
 }
 
+// bitflags 允许你创建一种特殊的枚举类型，用于表示二进制位掩码，通常用于处理位操作。
 bitflags::bitflags! {
     /// Node (file/directory) permission mode.
     #[derive(Debug, Clone, Copy)]

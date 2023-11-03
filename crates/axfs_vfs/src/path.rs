@@ -3,9 +3,10 @@
 use alloc::string::String;
 
 /// Returns the canonical form of the path with all intermediate components
-/// normalized.
+/// normalized. 返回带有所有中间组件标准化的路径的规范形式。
+
 ///
-/// It won't force convert the path to an absolute form.
+/// It won't force convert the path to an absolute form. 它不会强制将路径转换为绝对形式。
 ///
 /// # Examples
 ///

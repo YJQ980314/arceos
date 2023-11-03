@@ -34,6 +34,10 @@ cfg_if! {
     }
 }
 
+// DummyBlockDev 是虚拟的块设备结构体。
+// DummyBlockDriver 是虚拟块设备的驱动程序结构体。
+// 然后，使用 register_block_driver! 宏注册了块设备驱动程序。
+// 接下来，实现了 BaseDriverOps 和 BlockDriverOps trait 的方法来描述虚拟块设备的性能和操作。这包括设备类型、设备名称、块的数量、块的大小，以及读取和写入块数据等操作。
 cfg_if! {
     if #[cfg(block_dev = "dummy")] {
         pub struct DummyBlockDev;

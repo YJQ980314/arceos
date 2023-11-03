@@ -15,6 +15,9 @@
 //!
 //! This crate supports two device models depending on the `dyn` feature:
 //!
+
+//! 静态：所有设备的类型都是静态的，它在编译时由相应的 cargo 特性确定。例如，如果启用了 virtio-net 特性，则 [AxNetDevice] 将成为 [VirtioNetDev] 的别名。这个模型提供了最佳的性能，因为它避免了动态分发。但有一个限制，每个设备类别只支持一个设备实例。
+//! 动态：所有设备实例都使用[特征对象（trait objects）]，并包装在 Box<dyn Trait> 中。例如，[AxNetDevice] 将成为 [Box<dyn NetDriverOps>]。当调用设备提供的方法时，它使用[动态分发][dyn]，这可能会引入一些开销。但另一方面，它更加灵活，支持每个设备类别的多个实例。
 //! - **Static**: The type of all devices is static, it is determined at compile
 //!  time by corresponding cargo features. For example, [`AxNetDevice`] will be
 //! an alias of [`VirtioNetDev`] if the `virtio-net` feature is enabled. This
@@ -117,7 +120,7 @@ impl AllDevices {
         }
     }
 
-    /// Probes all supported devices.
+    /// Probes all supported devices. 在系统启动时自动识别并注册可用的设备，以便系统能够与这些设备进行交互。这种动态的设备管理允许系统适应各种不同配置和硬件环境
     fn probe(&mut self) {
         for_each_drivers!(type Driver, {
             if let Some(dev) = Driver::probe_global() {

@@ -24,6 +24,7 @@ pub struct RamFileSystem {
     parent: Once<VfsNodeRef>,
     root: Arc<DirNode>,
 }
+// 基于内存的文件系统（RamFileSystem），其中 parent 字段可能表示父级文件系统，而 root 字段指向文件系统的根目录。Once 保证无论有多少线程尝试调用 call_once，闭包都只会被执行一次。其他线程会被阻塞，直到初始化完成。
 
 impl RamFileSystem {
     /// Create a new instance.

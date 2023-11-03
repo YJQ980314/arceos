@@ -23,6 +23,17 @@ create_test_img() {
 	mkdir -p "mnt/very-long-dir-name"
 	echo "Rust is cool!" >>"mnt/very-long-dir-name/very-long-file-name.txt"
 
+    mkdir -p "mnt/Program"
+    mkdir -p "mnt/Program/Rust"
+    mkdir -p "mnt/Program/Linux"
+    mkdir -p "mnt/Program/Python"
+    mkdir -p "mnt/Program/JavaScript"
+
+    echo "Rust is very cool!" >> "mnt/Program/Rust/rust.txt"
+    echo "Linux is very cool!" >> "mnt/Program/Linux/linux.txt"
+    echo "Python is very cool!" >> "mnt/Program/Python/python.txt"
+    echo "JavaScript is very cool!" >> "mnt/Program/JavaScript/javascript.txt"
+
 	sudo umount mnt
 }
 

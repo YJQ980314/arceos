@@ -171,6 +171,7 @@ pub trait VfsNodeOps: Send + Sync {
 }
 
 #[doc(hidden)]
+// 以双下划线（__）开头，通常表示它是一个私有模块，供 crate 内部使用。
 pub mod __priv {
     pub use alloc::sync::Arc;
     pub use axerrno::ax_err;

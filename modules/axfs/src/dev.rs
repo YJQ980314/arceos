@@ -36,7 +36,7 @@ impl Disk {
         self.offset = pos as usize % BLOCK_SIZE;
     }
 
-    /// Read within one block, returns the number of bytes read.
+    /// Read within one block, returns the number of bytes read. 在一个数据块内读取，返回读取的字节数。
     pub fn read_one(&mut self, buf: &mut [u8]) -> DevResult<usize> {
         let read_size = if self.offset == 0 && buf.len() >= BLOCK_SIZE {
             // whole block

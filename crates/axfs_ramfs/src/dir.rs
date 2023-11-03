@@ -16,6 +16,7 @@ pub struct DirNode {
     parent: RwLock<Weak<dyn VfsNodeOps>>,
     children: RwLock<BTreeMap<String, VfsNodeRef>>,
 }
+// 这个结构体用于构建文件系统中的目录节点，通过 this 弱引用、parent 引用父节点、children 存储子节点，来表示目录的层次结构。
 
 impl DirNode {
     pub(super) fn new(parent: Option<Weak<dyn VfsNodeOps>>) -> Arc<Self> {
@@ -30,7 +31,7 @@ impl DirNode {
         *self.parent.write() = parent.map_or(Weak::<Self>::new() as _, Arc::downgrade);
     }
 
-    /// Returns a string list of all entries in this directory.
+    /// Returns a string list of all entries in this directory. 返回此目录中所有条目的字符串列表。
     pub fn get_entries(&self) -> Vec<String> {
         self.children.read().keys().cloned().collect()
     }

@@ -149,7 +149,9 @@ pub(crate) fn init_rootfs(disk: crate::dev::Disk) {
             let main_fs = fs::myfs::new_myfs(disk);
         } else if #[cfg(feature = "fatfs")] {
             static FAT_FS: LazyInit<Arc<fs::fatfs::FatFileSystem>> = LazyInit::new();
+            // init_by 初始化一个数据结构，确保它只被初始化一次
             FAT_FS.init_by(Arc::new(fs::fatfs::FatFileSystem::new(disk)));
+            // init 是初始化文件系统对象的根目录，并确保根目录只会被初始化一次。
             FAT_FS.init();
             let main_fs = FAT_FS.clone();
         }
@@ -157,6 +159,7 @@ pub(crate) fn init_rootfs(disk: crate::dev::Disk) {
 
     let mut root_dir = RootDirectory::new(main_fs);
 
+    // 挂载：指的就是将设备文件中的顶级目录连接到Linux根目录下的某一目录，访问此目录就等同于访问设备文件。
     #[cfg(feature = "devfs")]
     root_dir
         .mount("/dev", mounts::devfs())

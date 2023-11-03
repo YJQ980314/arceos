@@ -146,6 +146,7 @@ macro_rules! ax_err_type {
 #[macro_export]
 macro_rules! ensure {
     ($predicate:expr, $context_selector:expr $(,)?) => {
+        // $(,)?：这是一个 Rust 宏的惯例写法，用于支持可选的逗号。这意味着在宏的调用中，你可以选择是否在 $context_selector 后面加上逗号。这样的写法使宏更加灵活。
         if !$predicate {
             return $context_selector;
         }

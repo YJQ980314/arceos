@@ -2,7 +2,7 @@ use axfs_vfs::{VfsNodeAttr, VfsNodeOps, VfsNodePerm, VfsNodeType, VfsResult};
 
 /// A zero device behaves like `/dev/zero`.
 ///
-/// It always returns a chunk of `\0` bytes when read, and all writes are discarded.
+/// It always returns a chunk of `\0` bytes when read, and all writes are discarded.在读取时，它总是返回一块\0字节，并且所有的写入操作都将被丢弃。
 pub struct ZeroDev;
 
 impl VfsNodeOps for ZeroDev {
